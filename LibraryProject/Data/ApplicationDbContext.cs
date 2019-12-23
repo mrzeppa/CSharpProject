@@ -10,5 +10,16 @@ namespace LibraryProject.Data
             : base(options)
         {
         }
+        public DbSet<LibraryProject.Models.Book> Book { get; set; }
+        public DbSet<LibraryProject.Models.Author> Author { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Book>()
+                .HasOne(p => p.Author)
+                .WithMany(b => b.Books)
+                .HasForeignKey(p => p.AuthorId);
+        }
     }
 }
