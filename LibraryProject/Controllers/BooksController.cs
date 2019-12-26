@@ -65,7 +65,7 @@ namespace LibraryProject.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Author, "Id", "Id", book.AuthorId);
+            ViewData["Author"] = new SelectList(_context.Author, "Id", "Id", book.AuthorId);
             return View(book);
         }
 

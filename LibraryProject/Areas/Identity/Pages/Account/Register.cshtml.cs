@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LibraryProject.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
+    [Authorize(Roles = "Administrator")]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -61,6 +61,11 @@ namespace LibraryProject.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required]
+            [Display(Name = "Role")]
+            public string Role { get; set; }
+
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -100,7 +105,7 @@ namespace LibraryProject.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        //await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
                 }
