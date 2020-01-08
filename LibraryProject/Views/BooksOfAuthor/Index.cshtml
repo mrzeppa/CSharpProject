@@ -1,0 +1,14 @@
+﻿@model LibraryProject.Models.Author
+@{
+   ViewData["Title"]="Index" ;
+}
+<form asp-action="Show" method="get">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <select asp-for="Id" class="form-control" asp-items="ViewBag.AuthorId"></select>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Show" class="btn btn-primary"/>
+    </div>
+</form>
+

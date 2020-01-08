@@ -25,7 +25,7 @@ namespace LibraryProject.Models
             Regex regex = new Regex(@"^([A-Z]{1,}|\d)[A-Za-z0-9 ]*$");
             if (!regex.IsMatch(Title))
             {
-                yield return new ValidationResult("Title should start with letter or number",
+                yield return new ValidationResult("Title should start with capital letter or number",
                     new[] { nameof(Title) });
             }
 

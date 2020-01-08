@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryProject.Controllers
 {
-    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -19,12 +18,11 @@ namespace LibraryProject.Controllers
         {
             _logger = logger;
         }
-
+        
         public IActionResult Index()
         {
             return View();
         }
-
         public IActionResult Privacy()
         {
             return View();

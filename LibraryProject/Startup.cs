@@ -110,7 +110,6 @@ namespace LibraryProject
             }
             var newUserRole = userManager.AddToRoleAsync(appUser, adminRoleName);
             newUserRole.Wait();
-
         }
     }
 }

@@ -12,6 +12,7 @@ namespace LibraryProject.Data
         }
         public DbSet<LibraryProject.Models.Book> Book { get; set; }
         public DbSet<LibraryProject.Models.Author> Author { get; set; }
+        public DbSet<LibraryProject.Models.AppAuthor> AppAuthor { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,6 +21,7 @@ namespace LibraryProject.Data
                 .HasOne(p => p.Author)
                 .WithMany(b => b.Books)
                 .HasForeignKey(p => p.AuthorId);
+            modelBuilder.Entity<AppAuthor>().HasNoKey();
         }
     }
 }

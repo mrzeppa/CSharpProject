@@ -48,7 +48,7 @@ namespace LibraryProject.Controllers
         // GET: Books/Create
         public IActionResult Create()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Author, "Id", "Name");
+            ViewData["AuthorId"] = new SelectList(_context.Author, "Id", "NameAndSurnameConcatenated");
             return View();
         }
 

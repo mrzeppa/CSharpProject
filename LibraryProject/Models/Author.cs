@@ -15,6 +15,7 @@ namespace LibraryProject.Models
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
         public List<Book> Books { get; set; }
+        public string NameAndSurnameConcatenated { get { return NameAndSurnameConcatenated = Name + " " + Surname; } set { } }
 
     }
 }
