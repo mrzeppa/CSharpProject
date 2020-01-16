@@ -5,7 +5,7 @@ namespace LibraryProject.TagHelpers
 {
     public class HomePageTagHelper : TagHelper
     {
-        private const string Class = "navbar-brand";
+        private const string Class = "titleFormat";
         private const string href = "/";
 
         public override void Process(TagHelperContext context, TagHelperOutput output)

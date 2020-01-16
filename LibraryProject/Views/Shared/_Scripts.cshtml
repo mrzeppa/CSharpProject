@@ -1,3 +1,34 @@
 ﻿<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script>
+
+    $("#search2").on("keyup", function () {
+        var searchString = $(this).val();
+        $("tr").each(function (results) {
+            if (results !== 0) {
+                if ($("#searchSelect").val() === "Title") {
+                    var id = $(this).find("td:nth-child(1)").text();
+                    if (id.indexOf(searchString) !== 0 && id.toLowerCase().indexOf(searchString.toLowerCase()) < 0) {
+                        $(this).hide();
+                    }
+                    else {
+                        $(this).show();
+                    }
+                }
+                else if ($("#searchSelect").val() === "Author name") {
+                    var id = $(this).find("td:nth-child(4)").text();
+                    if (id.indexOf(searchString) !== 0 && id.toLowerCase().indexOf(searchString.toLowerCase()) < 0) {
+                        $(this).hide();
+                    }
+                    else {
+                        $(this).show();
+                    }
+                }
+            }
+        })
+    });
+</script>

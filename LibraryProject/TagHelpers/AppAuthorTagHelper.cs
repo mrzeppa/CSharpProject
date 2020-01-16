@@ -14,8 +14,8 @@ namespace LibraryProject.TagHelpers
         public string Surname { get; set; }
         public string IndexNumber { get; set; }
 
-        private const string ulClass = "list-group list-group-flush";
-        private const string liClass = "list-group-item";
+        private const string ulClass = "list-group list-group-flush selectSize";
+        private const string liClass = "list-group-item fontBlack selectSize";
 
 
         public override void Process(TagHelperContext context, TagHelperOutput output)

@@ -10,9 +10,9 @@ namespace LibraryProject.Data
             : base(options)
         {
         }
-        public DbSet<LibraryProject.Models.Book> Book { get; set; }
-        public DbSet<LibraryProject.Models.Author> Author { get; set; }
-        public DbSet<LibraryProject.Models.AppAuthor> AppAuthor { get; set; }
+        public DbSet<Book> Book { get; set; }
+        public DbSet<Author> Author { get; set; }
+        public DbSet<AppAuthor> AppAuthor { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

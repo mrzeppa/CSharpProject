@@ -1,14 +1,15 @@
 ﻿@model LibraryProject.Models.Author
 @{
-   ViewData["Title"]="Index" ;
+   ViewData["Title"]= "Index" ;
 }
-<form asp-action="Show" method="get">
+<table-name name="Books of author"/>
+<form asp-action="Show" method="get" class="selectSize">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group">
-        <select asp-for="Id" class="form-control" asp-items="ViewBag.AuthorId"></select>
+        <select asp-for="Id" class="form-control mdb-select md-form" asp-items="ViewBag.AuthorId"></select>
     </div>
     <div class="form-group">
-        <input type="submit" value="Show" class="btn btn-primary"/>
+        <input type="submit" value="Show" class="defaultButton"/>
     </div>
 </form>
 

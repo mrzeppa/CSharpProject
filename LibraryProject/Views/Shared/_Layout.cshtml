@@ -7,23 +7,24 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
-<body class="bg-secondary">
-    <header>
-        <partial name="_HeaderPartial" />
-    </header>
-    <div>
-        <div class="container pt-3">
-            <main role="main">
-                @RenderBody()
-            </main>
+<body class="">
+    <div class="mycontainer">
+        <div class="firstPart bg-secondary">
+            <partial name="_HeaderPartial" />
         </div>
-    </div>
 
-    <footer class="border-top footer text-muted bg-danger">
+        <div class="secondPart">
+
+            @RenderBody()
+        </div>
+
+    </div>
+    <footer class="border-top footer text-muted bg-secondary">
         <partial name="_FooterPartial" />
     </footer>
     <partial name="_Scripts" />
     @RenderSection("Scripts", required: false)
 </body>
+
 
 </html>

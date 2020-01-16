@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LibraryProject.Data;
 using LibraryProject.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryProject.Controllers
 {
@@ -19,7 +20,7 @@ namespace LibraryProject.Controllers
             _context = context;
         }
 
-        // GET: Authors
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Author.ToListAsync());
@@ -65,7 +66,7 @@ namespace LibraryProject.Controllers
             return View(author);
         }
 
-        // GET: Authors/Edit/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -116,7 +117,7 @@ namespace LibraryProject.Controllers
             return View(author);
         }
 
-        // GET: Authors/Delete/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -134,7 +135,6 @@ namespace LibraryProject.Controllers
             return View(author);
         }
 
-        // POST: Authors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

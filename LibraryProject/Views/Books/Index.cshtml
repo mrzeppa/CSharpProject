@@ -6,15 +6,22 @@
 
 <div class="d-flex justify-content-between">
     <div>
-        <h1 class="float-left">Books</h1>
-
+        <table-name name="Books"/>
     </div>
     <div>
-        <a asp-action="Create"><button class="btn btn-info">Create new</button></a>
+        <select id="searchSelect" class="mdb-select">
+            <option>@Html.DisplayNameFor(model => model.Title)</option>
+            <option>@Html.DisplayNameFor(model => model.Author)</option>
+        </select>
+        <input id="search2" type="text" name="SearchString" placeholder="Search... " />
+    </div>
+    <div>
+        <a asp-action="Create"><button class="defaultButton">Create new</button></a>
 
     </div>
+
 </div>
-<table class="table">
+<table class="table table-dark table-hover">
     <thead>
         <tr>
             <th>
@@ -33,26 +40,30 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.YearOfPublish)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Author.Name) @Html.DisplayFor(modelItem => item.Author.Surname)
-            </td>
-            <td class="text-center">
-                <a asp-action="Edit" asp-route-id="@item.Id"><button class="btn btn-info">Edit</button></a> |
-                <a asp-action="Details" asp-route-id="@item.Id"><button class="btn btn-info">Details</button></a> |
-                <a asp-action="Delete" asp-route-id="@item.Id"><button class="btn btn-danger">Delete</button></a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.YearOfPublish)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author.Name) @Html.DisplayFor(modelItem => item.Author.Surname)
+                </td>
+                <td class="text-center">
+                    <a asp-action="Edit" asp-route-id="@item.Id"><button class="defaultButton">Edit</button></a> |
+                    <a asp-action="Details" asp-route-id="@item.Id"><button class="defaultButton">Details</button></a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id"><button class="redButton">Delete</button></a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+
+

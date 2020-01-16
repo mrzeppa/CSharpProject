@@ -1,0 +1,21 @@
+﻿@model LibraryProject.Models.Book
+
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => Model.Title)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.YearOfPublish)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.Quantity)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => Model.Author.Name) @Html.DisplayFor(modelItem => Model.Author.Surname)
+    </td>
+    <td class="text-center">
+        <a asp-action="Edit" asp-route-id="@Model.Id"><button class="defaultButton">Edit</button></a> |
+        <a asp-action="Details" asp-route-id="@Model.Id"><button class="defaultButton">Details</button></a> |
+        <a asp-action="Delete" asp-route-id="@Model.Id"><button class="redButton">Delete</button></a>
+    </td>
+</tr>

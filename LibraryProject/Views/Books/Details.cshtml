@@ -4,39 +4,51 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<table-name name="Details" />
+<div class="selectSize">
+    <table class="table table-dark">
+        <thead>
+            <tr>
+                <td bold>
+                    @Html.DisplayNameFor(model => model.Title)
 
-<div>
-    <h4>Book</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.YearOfPublish)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.YearOfPublish)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Quantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Quantity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Author)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Author.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.Title)
+
+                </td>
+            </tr>
+            <tr>
+                <td bold>
+                    @Html.DisplayNameFor(model => model.YearOfPublish)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.YearOfPublish)
+
+                </td>
+            </tr>
+            <tr>
+                <td bold>
+                    @Html.DisplayNameFor(model => model.Quantity)
+
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.Quantity)
+
+                </td>
+            </tr>
+            <tr>
+                <td bold>
+                    @Html.DisplayNameFor(model => model.Author)
+
+
+                </td>
+                <td>
+                    @Html.DisplayFor(model => model.Author.NameAndSurnameConcatenated)
+
+
+                </td>
+            </tr>
+        </thead>
+    </table>
 </div>

@@ -4,42 +4,60 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
-
-<h3>Are you sure you want to delete this?</h3>
+<table-name name="Delete"/>
+<h4>If you delete this You won't be able to restore it!</h4>
 <div>
-    <h4>Book</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.YearOfPublish)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.YearOfPublish)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Quantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Quantity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Author)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Author.Id)
-        </dd class>
-    </dl>
-    
+    <div class="selectSize">
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <td bold>
+                        @Html.DisplayNameFor(model => model.Title)
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.Title)
+
+                    </td>
+                </tr>
+                <tr>
+                    <td bold>
+                        @Html.DisplayNameFor(model => model.YearOfPublish)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.YearOfPublish)
+
+                    </td>
+                </tr>
+                <tr>
+                    <td bold>
+                        @Html.DisplayNameFor(model => model.Quantity)
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.Quantity)
+
+                    </td>
+                </tr>
+                <tr>
+                    <td bold>
+                        @Html.DisplayNameFor(model => model.Author)
+
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.Author.NameAndSurnameConcatenated)
+
+
+                    </td>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Delete" class="redButton" />
     </form>
 </div>

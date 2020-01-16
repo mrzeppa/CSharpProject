@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LibraryProject.Data;
 using LibraryProject.Models;
+using System.Text;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryProject.Controllers
 {
@@ -19,14 +23,21 @@ namespace LibraryProject.Controllers
             _context = context;
         }
 
-        // GET: Books
-        public async Task<IActionResult> Index()
+        [Authorize]
+        public async Task<IActionResult> Index(string searchString)
         {
-            var applicationDbContext = _context.Book.Include(b => b.Author);
-            return View(await applicationDbContext.ToListAsync());
-        }
+            var books = _context.Book.Include(b => b.Author);
 
-        // GET: Books/Details/5
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                books = _context.Book.Where(s => s.Title
+                                        .Contains(searchString))
+                                        .Include(b => b.Author);
+            }
+            ViewBag.result = books;
+            return View(await books.ToListAsync());
+        }
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -41,20 +52,60 @@ namespace LibraryProject.Controllers
             {
                 return NotFound();
             }
-
+            AddBookToSession(book);
             return View(book);
         }
 
-        // GET: Books/Create
+        private void AddBookToSession(Book book)
+        {
+            int maxListSize = 5;
+            HttpContext.Session.TryGetValue("books", out var booksByte);
+            
+
+            string books = "";
+            if (booksByte == null)
+            {
+                HttpContext.Session.SetString("books", "");
+                books = "";
+            }
+            else
+            {
+                books = Encoding.UTF8.GetString(booksByte, 0, booksByte.Length);
+            }
+
+            var booksList = JsonConvert.DeserializeObject<List<Book>>(books);
+
+            if (booksList == null)
+            {
+                booksList = new List<Book>();
+            }
+
+            var isInTheList = booksList.FirstOrDefault(b => b.Id == book.Id);
+
+            if (isInTheList == null)
+            {
+                booksList.Add(book);
+            }
+            else
+            { 
+                booksList.Remove(isInTheList);
+                booksList.Add(book);
+            }
+
+            booksList.Reverse();
+
+            HttpContext.Session.SetString("books", JsonConvert.SerializeObject(booksList, Formatting.Indented, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            }));
+        }
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["AuthorId"] = new SelectList(_context.Author, "Id", "NameAndSurnameConcatenated");
             return View();
         }
 
-        // POST: Books/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,YearOfPublish,Quantity,AuthorId")] Book book)
@@ -65,11 +116,11 @@ namespace LibraryProject.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Author"] = new SelectList(_context.Author, "Id", "Id", book.AuthorId);
+            ViewData["AuthorId"] = new SelectList(_context.Author, "Id", "NameAndSurnameConcatenated");
             return View(book);
         }
 
-        // GET: Books/Edit/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -82,7 +133,7 @@ namespace LibraryProject.Controllers
             {
                 return NotFound();
             }
-            ViewData["AuthorId"] = new SelectList(_context.Author, "Id", "Id", book.AuthorId);
+            ViewData["AuthorId"] = new SelectList(_context.Author, "Id", "NameAndSurnameConcatenated");
             return View(book);
         }
 
@@ -118,11 +169,12 @@ namespace LibraryProject.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Author, "Id", "Id", book.AuthorId);
+            ViewData["AuthorId"] = new SelectList(_context.Author, "Id", "NameAndSurnameConcatenated");
             return View(book);
         }
 
         // GET: Books/Delete/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -150,6 +202,23 @@ namespace LibraryProject.Controllers
             _context.Book.Remove(book);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+        [Authorize]
+        public async Task<IActionResult> LastSeen()
+        {
+            HttpContext.Session.TryGetValue("books", out var booksByte);
+            var books = "";
+            var booksList = new List<Book>();
+            if (booksByte == null)
+            {
+                return View(booksList);
+            }
+            else
+            {
+                books = Encoding.UTF8.GetString(booksByte, 0, booksByte.Length);
+                booksList = JsonConvert.DeserializeObject<List<Book>>(books);
+                return View(booksList);
+            }
         }
 
         private bool BookExists(int id)

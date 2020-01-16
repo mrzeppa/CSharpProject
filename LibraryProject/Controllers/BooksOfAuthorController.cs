@@ -33,6 +33,8 @@ namespace LibraryProject.Controllers
             }
             ViewBag.Id = id;
             var books = _context.Book.Where(b => b.AuthorId == id);
+            var authorName = _context.Author.Where(a => a.Id == id).Select(p => p.NameAndSurnameConcatenated).FirstOrDefault();
+            ViewBag.Author = authorName;
             return View(books);
         }
     }
