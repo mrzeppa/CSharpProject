@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LibraryProject.Data;
 using LibraryProject.Models;
+using LibraryProject.Services;
 using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryProject.Controllers
@@ -14,28 +15,28 @@ namespace LibraryProject.Controllers
     public class AuthorsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAuthorService _authorService;
 
-        public AuthorsController(ApplicationDbContext context)
+        public AuthorsController(ApplicationDbContext context, IAuthorService authorService)
         {
             _context = context;
+            _authorService = authorService;
         }
 
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Author.ToListAsync());
+            // return View(await _context.Author.ToListAsync());
+            return View(await _authorService.GetAuthorAsync());
         }
 
         // GET: Authors/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var author = await _context.Author
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var author = _authorService.GetAuthorByIdAsync(id).Result;
+            // var author = await _context.Author
+            //     .FirstOrDefaultAsync(m => m.Id == id);
             if (author == null)
             {
                 return NotFound();
@@ -59,22 +60,21 @@ namespace LibraryProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(author);
-                await _context.SaveChangesAsync();
+                // _context.Add(author);
+                // await _context.SaveChangesAsync();
+
+                await _authorService.CreateAuthorAsync(author);
+
                 return RedirectToAction(nameof(Index));
             }
             return View(author);
         }
 
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var author = await _context.Author.FindAsync(id);
+            // var author = await _context.Author.FindAsync(id);
+            var author = _authorService.GetAuthorByIdAsync(id).Result;
             if (author == null)
             {
                 return NotFound();
@@ -98,8 +98,9 @@ namespace LibraryProject.Controllers
             {
                 try
                 {
-                    _context.Update(author);
-                    await _context.SaveChangesAsync();
+                    // _context.Update(author);
+                    // await _context.SaveChangesAsync();
+                    await _authorService.UpdateAsync(id, author);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -118,15 +119,15 @@ namespace LibraryProject.Controllers
         }
 
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var author = await _context.Author
-                .FirstOrDefaultAsync(m => m.Id == id);
+
+            // var author = await _context.Author
+            //     .FirstOrDefaultAsync(m => m.Id == id);
+
+            var author = _authorService.GetAuthorByIdAsync(id).Result;
+
             if (author == null)
             {
                 return NotFound();
@@ -139,9 +140,10 @@ namespace LibraryProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var author = await _context.Author.FindAsync(id);
-            _context.Author.Remove(author);
-            await _context.SaveChangesAsync();
+            // var author = await _context.Author.FindAsync(id);
+            // _context.Author.Remove(author);
+            // await _context.SaveChangesAsync();
+            await _authorService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 

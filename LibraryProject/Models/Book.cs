@@ -27,8 +27,6 @@ namespace LibraryProject.Models
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            
-
             Regex regex = new Regex(@"^[A-Z0-9].+");
             if (!regex.IsMatch(Title))
             {

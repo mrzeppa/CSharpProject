@@ -2,8 +2,12 @@ using System;
 using System.Threading.Tasks;
 using LibraryProject.Data;
 using LibraryProject.Models;
+using LibraryProject.Repository;
+using LibraryProject.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Session;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +46,21 @@ namespace LibraryProject
                 options.IdleTimeout = TimeSpan.FromMinutes(10);
                 options.Cookie.Name = "Books";
             });
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<IBookRepository, BookRepository>();
+
+            services.AddScoped<IBookService, BookService>();
+
+            services.AddScoped<IAuthorRepository, AuthorRepository>();
+
+            services.AddScoped<IAuthorService, AuthorService>();
+
+            services.AddScoped<IBooksOfAuthorService, BooksOfAuthorService>();
+
+            services.AddScoped<IBooksOfAuthorRepository, BooksOfAuthorRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,6 +77,14 @@ namespace LibraryProject
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseExceptionHandler(a => a.Run(async context => {
+                var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+                var isAdmin = context.User.IsInRole("Administrator");
+                var result = isAdmin ? exceptionHandlerPathFeature.Error.ToString() : "Server side error has occured";
+                await context.Response.WriteAsync(result);
+            }));
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -81,7 +108,7 @@ namespace LibraryProject
                         defaults: new { controller = "Books", action = "Delete" });
                 routes.MapRoute("lastSeen", "SeenRecently",
                         defaults: new { controller = "Books", action = "LastSeen" });
-                routes.MapRoute("createBook", "CreateBook",
+                routes.MapRoute("createBook", "CreateAuthorAsync",
                         defaults: new { controller = "Books", action = "Create" });
 
                 routes.MapRoute("allAuthors", "AllAuthors",

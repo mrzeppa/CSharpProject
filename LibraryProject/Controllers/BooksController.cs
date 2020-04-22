@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using LibraryProject.Data;
 using LibraryProject.Models;
 using System.Text;
+using LibraryProject.Services;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
@@ -16,52 +17,48 @@ namespace LibraryProject.Controllers
 {
     public class BooksController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IBookService _bookService;
 
-        public BooksController(ApplicationDbContext context)
+        public BooksController(IBookService bookService)
         {
-            _context = context;
+            _bookService = bookService;
         }
 
         [Authorize]
         public async Task<IActionResult> Index(string searchString)
         {
-            var books = _context.Book.Include(b => b.Author);
+            // var books = _context.Book.Include(b => b.Author);
 
+            var books = await _bookService.GetBooksAsync();
             if (!String.IsNullOrEmpty(searchString))
             {
-                books = _context.Book.Where(s => s.Title
-                                        .Contains(searchString))
-                                        .Include(b => b.Author);
-            }
-            ViewBag.result = books;
-            return View(await books.ToListAsync());
-        }
-        [Authorize]
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
+                // books = _context.Book.Where(s => s.Title
+                //                         .Contains(searchString))
+                //                         .Include(b => b.Author);
+                books = await _bookService.GetByNamePatternAsync(searchString);
             }
 
-            var book = await _context.Book
-                .Include(b => b.Author)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            ViewBag.result = books;
+
+            return View("Index", books);
+        }
+        [Authorize]
+        public async Task<IActionResult> Details(int id)
+        {
+            var book = await _bookService.GetBookByIdAsync(id);
+
             if (book == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
-            AddBookToSession(book);
-            return View(book);
+            // AddBookToSession(book);
+            return View("Details", book);
         }
 
         private void AddBookToSession(Book book)
         {
-            int maxListSize = 5;
             HttpContext.Session.TryGetValue("books", out var booksByte);
             
-
             string books = "";
             if (booksByte == null)
             {
@@ -73,12 +70,7 @@ namespace LibraryProject.Controllers
                 books = Encoding.UTF8.GetString(booksByte, 0, booksByte.Length);
             }
 
-            var booksList = JsonConvert.DeserializeObject<List<Book>>(books);
-
-            if (booksList == null)
-            {
-                booksList = new List<Book>();
-            }
+            var booksList = JsonConvert.DeserializeObject<List<Book>>(books) ?? new List<Book>();
 
             var isInTheList = booksList.FirstOrDefault(b => b.Id == book.Id);
 
@@ -99,11 +91,12 @@ namespace LibraryProject.Controllers
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             }));
         }
+
         [Authorize]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Author, "Id", "NameAndSurnameConcatenated");
-            return View();
+            ViewData["AuthorId"] = new SelectList(await _bookService.getAuthors(), "Id", "NameAndSurnameConcatenated");
+            return View("Create");
         }
 
         [HttpPost]
@@ -112,29 +105,28 @@ namespace LibraryProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(book);
-                await _context.SaveChangesAsync();
+                // _context.Add(book);
+
+                await _bookService.CreateAuthorAsync(book);
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Author, "Id", "NameAndSurnameConcatenated");
-            return View(book);
+            ViewData["AuthorId"] = new SelectList(await _bookService.getAuthors(), "Id", "NameAndSurnameConcatenated");
+            return View("Create", book);
         }
 
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var book = await _bookService.GetBookByIdAsync(id);
 
-            var book = await _context.Book.FindAsync(id);
+            // var book = await _context.Book.FindAsync(id);
             if (book == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
-            ViewData["AuthorId"] = new SelectList(_context.Author, "Id", "NameAndSurnameConcatenated");
-            return View(book);
+            ViewData["AuthorId"] = new SelectList(await _bookService.getAuthors(), "Id", "NameAndSurnameConcatenated");
+            return View("Edit", book);
         }
 
         // POST: Books/Edit/5
@@ -146,21 +138,22 @@ namespace LibraryProject.Controllers
         {
             if (id != book.Id)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(book);
-                    await _context.SaveChangesAsync();
+                    // _context.Update(book);
+                    await _bookService.UpdateAsync(id, book);
+                    // await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!BookExists(book.Id))
                     {
-                        return NotFound();
+                        return View("NotFound");
                     }
                     else
                     {
@@ -169,25 +162,24 @@ namespace LibraryProject.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AuthorId"] = new SelectList(_context.Author, "Id", "NameAndSurnameConcatenated");
-            return View(book);
+            ViewData["AuthorId"] = new SelectList(await _bookService.getAuthors(), "Id", "NameAndSurnameConcatenated");
+            return View("Edit", book);
         }
 
         // GET: Books/Delete/5
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var book = await _context.Book
-                .Include(b => b.Author)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            // var book = await _context.Book
+            //     .Include(b => b.Author)
+            //     .FirstOrDefaultAsync(m => m.Id == id);
+
+            var book = _bookService.GetBookByIdAsync(id).Result;
+
             if (book == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             return View(book);
@@ -198,10 +190,14 @@ namespace LibraryProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var book = await _context.Book.FindAsync(id);
-            _context.Book.Remove(book);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            // var book = await _context.Book.FindAsync(id);
+            // _context.Book.Remove(book);
+            // await _context.SaveChangesAsync();
+            var book = _bookService.GetBookByIdAsync(id).Result;
+
+            await _bookService.DeleteAsync(book.Id);
+
+            return RedirectToAction("Index");
         }
         [Authorize]
         public async Task<IActionResult> LastSeen()
@@ -223,7 +219,7 @@ namespace LibraryProject.Controllers
 
         private bool BookExists(int id)
         {
-            return _context.Book.Any(e => e.Id == id);
+            return _bookService.bookExists(id);
         }
     }
 }
