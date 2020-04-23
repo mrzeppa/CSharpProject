@@ -25,7 +25,7 @@ namespace LibraryProject.Controllers
         public async Task<IActionResult> Index()
         {
             // return View(await _context.Author.ToListAsync());
-            return View(await _authorService.GetAuthorAsync());
+            return View("Index", await _authorService.GetAuthorAsync());
         }
 
         // GET: Authors/Details/5
