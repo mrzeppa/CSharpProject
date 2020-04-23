@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LibraryProject.Data;
 using LibraryProject.Models;
+using LibraryProject.Repository;
 using LibraryProject.Services;
 using Microsoft.AspNetCore.Authorization;
 
@@ -14,12 +15,9 @@ namespace LibraryProject.Controllers
 {
     public class AuthorsController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IAuthorService _authorService;
-
-        public AuthorsController(ApplicationDbContext context, IAuthorService authorService)
+        public AuthorsController(IAuthorService authorService)
         {
-            _context = context;
             _authorService = authorService;
         }
 
@@ -34,7 +32,7 @@ namespace LibraryProject.Controllers
         public async Task<IActionResult> Details(int id)
         {
 
-            var author = _authorService.GetAuthorByIdAsync(id).Result;
+            var author = await _authorService.GetAuthorByIdAsync(id);
             // var author = await _context.Author
             //     .FirstOrDefaultAsync(m => m.Id == id);
             if (author == null)
@@ -48,7 +46,7 @@ namespace LibraryProject.Controllers
         // GET: Authors/Create
         public IActionResult Create()
         {
-            return View();
+            return View("Create");
         }
 
         // POST: Authors/Create
@@ -74,7 +72,7 @@ namespace LibraryProject.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             // var author = await _context.Author.FindAsync(id);
-            var author = _authorService.GetAuthorByIdAsync(id).Result;
+            var author = await _authorService.GetAuthorByIdAsync(id);
             if (author == null)
             {
                 return NotFound();
@@ -126,7 +124,7 @@ namespace LibraryProject.Controllers
             // var author = await _context.Author
             //     .FirstOrDefaultAsync(m => m.Id == id);
 
-            var author = _authorService.GetAuthorByIdAsync(id).Result;
+            var author = await _authorService.GetAuthorByIdAsync(id);
 
             if (author == null)
             {
@@ -143,13 +141,13 @@ namespace LibraryProject.Controllers
             // var author = await _context.Author.FindAsync(id);
             // _context.Author.Remove(author);
             // await _context.SaveChangesAsync();
-            await _authorService.DeleteAsync(id);
+             await _authorService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool AuthorExists(int id)
         {
-            return _context.Author.Any(e => e.Id == id);
+            return _authorService.authorExists(id);
         }
     }
 }

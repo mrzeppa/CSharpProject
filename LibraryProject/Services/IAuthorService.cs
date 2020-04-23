@@ -16,5 +16,6 @@ namespace LibraryProject.Services
         Task<Author> DeleteAsync(int id);
 
         Task<Author> UpdateAsync(int id, Author author);
+        bool authorExists(int id);
     }
 }

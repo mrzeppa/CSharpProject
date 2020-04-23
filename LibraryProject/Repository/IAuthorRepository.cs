@@ -13,5 +13,6 @@ namespace LibraryProject.Repository
         Task<Author> GetByIdAsync(int id);
         Task<Author> UpdateAsync(int id, Author newAuthor);
         Task<Author> DeleteAsync(int id);
+        bool authorExist(int id);
     }
 }

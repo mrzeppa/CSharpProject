@@ -49,5 +49,10 @@ namespace LibraryProject.Services
 
             return result;
         }
+
+        public bool authorExists(int id)
+        {
+            return _authorRepository.authorExist(id);
+        }
     }
 }

@@ -262,7 +262,7 @@ namespace LibraryProjectTest
         [Fact]
         public async Task ConfirmedDelete_ShouldRedirectToIndexPage()
         {
-            var book = new Book() { Title = "team1" };
+            var book = new Book() { Title = "TEST1" };
 
             _bookService.Setup(mock => mock.GetBookByIdAsync(1)).ReturnsAsync(book);
 
@@ -272,8 +272,6 @@ namespace LibraryProjectTest
             result.Should().BeOfType<RedirectToActionResult>();
             redirectResult.ActionName.Should().Be("Index");
         }
-
-
 
         public void Dispose()
         {

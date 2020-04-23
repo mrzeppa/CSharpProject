@@ -193,7 +193,7 @@ namespace LibraryProject.Controllers
             // var book = await _context.Book.FindAsync(id);
             // _context.Book.Remove(book);
             // await _context.SaveChangesAsync();
-            var book = _bookService.GetBookByIdAsync(id).Result;
+            var book = await _bookService.GetBookByIdAsync(id);
 
             await _bookService.DeleteAsync(book.Id);
 

@@ -57,5 +57,10 @@ namespace LibraryProject.Repository
 
             return author;
         }
+
+        public bool authorExist(int id)
+        {
+            return _context.Author.Any(e => e.Id == id);
+        }
     }
 }
